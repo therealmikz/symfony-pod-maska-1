@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+
+	<head>
+		<meta charset="utf-8">
+
+		<title>reveal.js - The HTML Presentation Framework</title>
+
+		<meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+		<meta name="author" content="Hakim El Hattab">
+
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<link rel="stylesheet" href="reveal.js/css/reveal.min.css">
+		<link rel="stylesheet" href="reveal.js/css/theme/beige.css" id="theme">
+
+		<!-- For syntax highlighting -->
+		<link rel="stylesheet" href="reveal.js/lib/css/zenburn.css">
+
+		<link rel="stylesheet" href="css/custom.css">
+
+		<!-- If the query includes 'print-pdf', include the PDF print sheet -->
+		<script>
+			if( window.location.search.match( /print-pdf/gi ) ) {
+				var link = document.createElement( 'link' );
+				link.rel = 'stylesheet';
+				link.type = 'text/css';
+				link.href = 'reveal.js/css/print/pdf.css';
+				document.getElementsByTagName( 'head' )[0].appendChild( link );
+			}
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="reveal.js/lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="background" style="position: absolute; padding: 15px; width: 12%;">
+			<a href="http://phpers.pl/" style="display: block; width: 100%; height: auto"><img src="./logo.png" style="width: 100%; height: 100%" /></a>
+		</div>
+
+		<div class="reveal">
+
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>Symfony pod maską</h1>
+					<h3>Przepływ logiki request - response na eventach w Symfony Framework</h3>
+					<p>
+						<small><a target="_blank" href="mailto:michal.matulka@protonmail.ch">Michał Matulka</a></small>
+					</p>
+                                        <p><small>PHPers Warszawa #13</small></p>
+				</section>
+                                <section>
+					<h3>Krótko o Symfony</h3>
+                                        <ul>
+                                            <li>Pełen framework oparty o zestaw komponentów</li>
+                                            <li>Integracja komponentów przy pomocy zdarzeń i Dependency Injection</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Analiza kodu vs. dokumentacja</h3>
+                                        <ul>
+                                            <li>Zrozumienie jak działają poszczególne elementy frameworka</li>
+                                            <li>Poznanie implementacji tego, co przeczytaliśmy w dokumentacji</li>
+                                            <li>Zdobycie wiedzy pozwalającej nam na tworzenie kodu bardziej kompatybilnego z Symfony</li>
+                                            <li>Odnalezienie nieudokumentowanych lub słabo udokumentowanych funkcji</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Jakość kodu</h3>
+                                        <pre class="fragment">The method computeChangeSet() has an NPath complexity of 64923144.
+The configured NPath complexity threshold is 200.</pre>
+				</section>
+                                <section>
+					<h3>Komponent Event Dispatcher</h3>
+                                        <ul>
+                                            <li>Serwis event_dispatcher (Symfony\Component\EventDispatcher\EventDispatcher)</li>
+                                            <li>Obiekt zdarzenia (Symfony\Component\EventDispatcher\Event)</li>
+                                            <li>Listenery</li>
+                                            <li>Subscribery (Symfony\Component\EventDispatcher\EventSubscriberInterface)</li>
+                                            <li>Integracja z kontenerem Dependency Injection <span style="font-size: 0.7em">(Symfony\Component\EventDispatcher\DependencyInjection\RegisterListenersPass)</span></li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Callback hell?</h3>
+				</section>
+                                <section>
+					<h3>Komponent HttpKernel</h3>
+                                        <p>Integruje wszystkie komponenty Symfony podczas obsługi requesta przy pomocy zdarzeń.</p>
+				</section>
+                                <section>
+					<h3>Co to ten kernel?</h3>
+                                        <p style="text-align: center;">
+                                            <img style="width: 200px; height: 200px; margin: 5px; vertical-align: middle;" src="http://g02.a.alicdn.com/kf/HTB1uLJxIVXXXXbqaXXXq6xXFXXX9/Nut-Kernel-Dried-fruit-cream-taste-Macadamia-Creamy-Milk-Hawaii-Nuts-New-Nut-Kernel-Healthy-and.jpg" />
+                                            <img style="width: 200px; height: 140px; margin: 5px; vertical-align: middle;" src="http://media.tumblr.com/tumblr_mexq8dgZ7T1r7o69l.jpg" />
+                                            <img style="width: 200px; height: 150px; margin: 5px; vertical-align: middle;" src="https://d13yacurqjgara.cloudfront.net/users/59955/screenshots/698854/system_core_white_copy.png" />
+                                            <img style="width: 200px; height: 200px; margin: 5px; vertical-align: middle;" src="http://www.mukbel.com/images/PobCorn.jpg" />
+                                            <img style="width: 200px; height: 100px; margin: 5px; vertical-align: middle;" class="fragment" src="https://now.mmedia.me/Pages/ImageStreamer/param/MediaID__60d2d215-f2c3-4cb4-8344-b9e21b43adb0/w__616/h__394/censor1-600x400.jpg" />
+                                        </p>
+				</section>
+                                <section>
+					<h3>Kopiemy w kodzie!</h3>
+				</section>
+                                <section>
+					<h3>Front controller</h3>
+                                        <p>web/app.php</p>
+				</section>
+                                <section>
+					<h3>Klasa Kernel</h3>
+                                        <p>Symfony\Component\HttpKernel\Kernel</p>
+                                        <ul>
+                                            <li>Centralna część <b>aplikacji</b></li>
+                                            <li>Serwis kernel</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Klasa HttpKernel</h3>
+                                        <p>Symfony\Component\HttpKernel\HttpKernel</p>
+                                        <ul>
+                                            <li>Centralna część <b>obsługi żądań</b></li>
+                                            <li>Serwis http_kernel</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Klasa KernelEvents</h3>
+                                        <p>Symfony\Component\HttpKernel\KernelEvents</p>
+                                        <ul>
+                                            <li>Wszystkie zdarzenia HttpKernel</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::REQUEST</h3>
+                                        <h4>Niektóre subscribery:</h4>
+                                        <ul style="font-size: 0.5em">
+                                            <li><b>Symfony\Component\Security\Http\Firewall</b> - rejestruje kolejne listenery związane z komponentem Security</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\ValidateRequestListener</b> - weryfikuje jednolitość nagłówków requesta informujących o adresie IP klienta (funkcja powiązana z loadbalancerami)</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\TranslationListener</b> - przekazuje informację o lokalizacji z requesta do komponentu translator</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\SessionListener</b> - ustawia sesję w obiekcie requesta</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\RouterListener</b> - główny bohater - uruchamia router, rozwiązuje ścieżkę z urla i ustawia na obiekcie requesta atrybut _controller informujący o kontrolerze, który należy uruchomić w celu obsłużenia danego żądania</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\FragmentListener</b> - obsługuje m. in. znaczniki ESI</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\DebugHandlersListener</b> - konfiguruje handlery obsługujące błędy oraz wyjątki</li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\AddRequestFormatsListener</b> - ustawia na obiekcie requesta formaty</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::CONTROLLER</h3>
+                                        <ul style="font-size: 0.7em">
+                                            <li><b>Sensio\Bundle\FrameworkExtraBundle\EventListener\ControllerListener</b></li>
+                                            <li>Listenery z FrameworkExtraBundle</li>
+                                            <li style="font-weight: bold">Komponent security!</li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::CONTROLLER_ARGUMENTS</h3>
+                                        <p>Nie integruje żadnych komponentów</p>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::VIEW</h3>
+                                        <ul style="font-size: 0.7em">
+                                            <li><b>Sensio\Bundle\FrameworkExtraBundle\EventListener\PsrResponseListener</b></li>
+                                            <li><b>Sensio\Bundle\FrameworkExtraBundle\EventListener\TemplateListener</b></li>
+                                        </ul>
+                                        <p><img class="fragment" src="https://imgs.xkcd.com/comics/standards.png" /></p>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::RESPONSE</h3>
+                                        <ul style="font-size: 0.7em">
+                                            <li><b>Sensio\Bundle\FrameworkExtraBundle\EventListener\HttpCacheListener</b></li>
+                                            <li><b>Symfony\Bundle\WebProfilerBundle\EventListener\WebDebugToolbarListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\DataCollector\RequestDataCollector</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\ProfilerListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\ResponseListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\SaveSessionListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\StreamedResponseListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\SurrogateListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\TestSessionListener</b></li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::FINISH_REQUEST</h3>
+                                        <p>Serwisy zmieniają stan w związku z potencjalnymi subrequestami</p>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::EXCEPTION</h3>
+                                        <ul style="font-size: 0.7em">
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\ProfilerListener</b></li>
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\ExceptionListener</b></li>
+                                        </ul>
+                                        <p>Kontroler błędów!</p>
+				</section>
+                                <section>
+					<h3>Zdarzenie KernelEvents::TERMINATE</h3>
+                                        <ul style="font-size: 0.7em">
+                                            <li><b>Symfony\Component\HttpKernel\EventListener\ProfilerListener</b></li>
+                                            <li><b>Symfony\Bundle\SwiftmailerBundle\EventListener\EmailSenderListener</b></li>
+                                        </ul>
+				</section>
+                                <section>
+					<h3>Własne listenery</h3>
+				</section>
+                                <section>
+					<h3>Pytania?</h3>
+				</section>
+                                <section>
+					<h3>Nie mam bladego pojęcia!</h3>
+				</section>
+			</div>
+
+		</div>
+
+		<script src="reveal.js/lib/js/head.min.js"></script>
+		<script src="reveal.js/js/reveal.min.js"></script>
+
+		<script>
+			// Full list of configuration options available here:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+				theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+				transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+				// Parallax scrolling
+				// parallaxBackgroundImage: 'https://s3.amazonaws.com/hakim-static/reveal-js/reveal-parallax-1.jpg',
+				// parallaxBackgroundSize: '2100px 900px',
+				// Optional libraries used to extend on reveal.js
+				dependencies: [
+					{ src: 'reveal.js/lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'reveal.js/plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal.js/plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'reveal.js/plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'reveal.js/plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+					{ src: 'reveal.js/plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+				]
+			});
+		</script>
+
+	</body>
+</html>
